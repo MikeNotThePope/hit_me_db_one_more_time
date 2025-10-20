@@ -1,4 +1,4 @@
-defmodule HitMeDbOneMoreTimes.Plugins.Behaviour do
+defmodule HitMeDbOneMoreTime.Plugins.Behaviour do
   @moduledoc """
   Defines the behaviour that all plugins must implement.
 

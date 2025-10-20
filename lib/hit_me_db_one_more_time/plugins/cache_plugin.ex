@@ -1,4 +1,4 @@
-defmodule HitMeDbOneMoreTimes.Plugins.CachePlugin do
+defmodule HitMeDbOneMoreTime.Plugins.CachePlugin do
   @moduledoc """
   A caching plugin that can serve responses from cache without hitting the database.
 
@@ -7,7 +7,7 @@ defmodule HitMeDbOneMoreTimes.Plugins.CachePlugin do
   check request rates here and either serve cached results or deny the request.
   """
 
-  @behaviour HitMeDbOneMoreTimes.Plugins.Behaviour
+  @behaviour HitMeDbOneMoreTime.Plugins.Behaviour
 
   require Logger
 

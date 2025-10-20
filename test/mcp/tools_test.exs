@@ -1,16 +1,16 @@
-defmodule HitMeDbOneMoreTimes.MCP.ToolsTest do
+defmodule HitMeDbOneMoreTime.MCP.ToolsTest do
   use ExUnit.Case
 
-  alias HitMeDbOneMoreTimes.MCP.Tools
-  alias HitMeDbOneMoreTimes.Database.{Repo, Item}
+  alias HitMeDbOneMoreTime.MCP.Tools
+  alias HitMeDbOneMoreTime.Database.{Repo, Item}
 
   setup do
     # Ensure the repo is started
-    start_supervised!(HitMeDbOneMoreTimes.Database.Repo)
+    start_supervised!(HitMeDbOneMoreTime.Database.Repo)
 
     # Initialize plugin ETS tables
-    HitMeDbOneMoreTimes.Plugins.CachePlugin.start_link()
-    HitMeDbOneMoreTimes.Plugins.RateLimiterPlugin.start_link()
+    HitMeDbOneMoreTime.Plugins.CachePlugin.start_link()
+    HitMeDbOneMoreTime.Plugins.RateLimiterPlugin.start_link()
 
     # Create table and seed test data
     Repo.query!("""

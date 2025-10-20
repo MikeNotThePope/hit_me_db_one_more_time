@@ -1,4 +1,4 @@
-defmodule HitMeDbOneMoreTimes.Application do
+defmodule HitMeDbOneMoreTime.Application do
   @moduledoc """
   The main application supervisor for the MCP Server.
   """
@@ -8,20 +8,20 @@ defmodule HitMeDbOneMoreTimes.Application do
 
   @impl true
   def start(_type, _args) do
-    Logger.info("Starting Hit Me DB One More Times application...")
+    Logger.info("Starting Hit Me DB One More Time application...")
 
     # Initialize plugin ETS tables
-    HitMeDbOneMoreTimes.Plugins.CachePlugin.start_link()
-    HitMeDbOneMoreTimes.Plugins.RateLimiterPlugin.start_link()
+    HitMeDbOneMoreTime.Plugins.CachePlugin.start_link()
+    HitMeDbOneMoreTime.Plugins.RateLimiterPlugin.start_link()
 
     children = [
       # Start the Ecto repository
-      HitMeDbOneMoreTimes.Database.Repo,
+      HitMeDbOneMoreTime.Database.Repo,
       # Start the MCP server
-      HitMeDbOneMoreTimes.MCP.Server
+      HitMeDbOneMoreTime.MCP.Server
     ]
 
-    opts = [strategy: :one_for_one, name: HitMeDbOneMoreTimes.Supervisor]
+    opts = [strategy: :one_for_one, name: HitMeDbOneMoreTime.Supervisor]
     result = Supervisor.start_link(children, opts)
 
     # Seed the database if it's empty
@@ -34,7 +34,7 @@ defmodule HitMeDbOneMoreTimes.Application do
   end
 
   defp seed_if_needed do
-    alias HitMeDbOneMoreTimes.Database.{Repo, Item, Seeder}
+    alias HitMeDbOneMoreTime.Database.{Repo, Item, Seeder}
 
     case Repo.aggregate(Item, :count) do
       0 ->
@@ -47,6 +47,6 @@ defmodule HitMeDbOneMoreTimes.Application do
   rescue
     error ->
       Logger.warning("Could not check database, seeding anyway: #{inspect(error)}")
-      HitMeDbOneMoreTimes.Database.Seeder.seed()
+      HitMeDbOneMoreTime.Database.Seeder.seed()
   end
 end

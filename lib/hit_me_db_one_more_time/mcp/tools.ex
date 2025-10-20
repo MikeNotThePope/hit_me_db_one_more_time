@@ -1,12 +1,12 @@
-defmodule HitMeDbOneMoreTimes.MCP.Tools do
+defmodule HitMeDbOneMoreTime.MCP.Tools do
   @moduledoc """
   Implements MCP tools that can be called by clients.
 
   This module defines the available tools and their handlers.
   """
 
-  alias HitMeDbOneMoreTimes.Database.{Repo, Item}
-  alias HitMeDbOneMoreTimes.Plugins.{Pipeline, RateLimiterPlugin, LoggingPlugin, CachePlugin}
+  alias HitMeDbOneMoreTime.Database.{Repo, Item}
+  alias HitMeDbOneMoreTime.Plugins.{Pipeline, RateLimiterPlugin, LoggingPlugin, CachePlugin}
   import Ecto.Query
 
   @doc """

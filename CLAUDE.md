@@ -35,7 +35,7 @@ mix format --check-formatted  # Check if code is properly formatted
 ## Architecture
 
 The project follows standard Elixir/Mix conventions:
-- Application entry point: `lib/hit_me_db_one_more_times.ex`
+- Application entry point: `lib/hit_me_db_one_more_time.ex`
 - Tests in `test/` directory with `_test.exs` suffix
 - Mix configuration in `mix.exs`
 

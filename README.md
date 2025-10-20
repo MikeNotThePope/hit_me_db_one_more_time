@@ -1,4 +1,4 @@
-# Hit Me DB One More Times
+# Hit Me DB One More Time
 
 An MCP (Model Context Protocol) Server with a plugin architecture for demonstrating rate limiting concepts.
 
@@ -131,7 +131,7 @@ The plugin system allows intercepting requests before they hit the database. Thi
 
 ### How Plugins Work
 
-Each plugin implements the `HitMeDbOneMoreTimes.Plugins.Behaviour` and can:
+Each plugin implements the `HitMeDbOneMoreTime.Plugins.Behaviour` and can:
 
 1. **Pass through**: Let the request continue to the next plugin
 2. **Short-circuit**: Return a response immediately without hitting the database
@@ -210,7 +210,7 @@ context = %{
 
 ```elixir
 defmodule MyPlugin do
-  @behaviour HitMeDbOneMoreTimes.Plugins.Behaviour
+  @behaviour HitMeDbOneMoreTime.Plugins.Behaviour
 
   def process(request, context) do
     # Your logic here
@@ -219,7 +219,7 @@ defmodule MyPlugin do
 end
 ```
 
-2. Add it to the pipeline in `lib/hit_me_db_one_more_times/mcp/tools.ex`:
+2. Add it to the pipeline in `lib/hit_me_db_one_more_time/mcp/tools.ex`:
 
 ```elixir
 plugins = [
@@ -236,7 +236,7 @@ plugins = [
 
 ```
 lib/
-├── hit_me_db_one_more_times/
+├── hit_me_db_one_more_time/
 │   ├── application.ex          # OTP application supervisor
 │   ├── mcp/
 │   │   ├── server.ex           # MCP server (stdio communication)
@@ -252,7 +252,7 @@ lib/
 │       ├── repo.ex             # Ecto repository
 │       ├── item.ex             # Item schema
 │       └── seeder.ex           # Sample data generator
-└── hit_me_db_one_more_times.ex # Main module
+└── hit_me_db_one_more_time.ex # Main module
 ```
 
 ## Testing
@@ -278,7 +278,7 @@ mix format --check-formatted
 iex -S mix
 
 # Try calling tools directly
-iex> HitMeDbOneMoreTimes.MCP.Tools.execute_tool("get_records", %{"limit" => 5})
+iex> HitMeDbOneMoreTime.MCP.Tools.execute_tool("get_records", %{"limit" => 5})
 ```
 
 ## For Your Blog Post

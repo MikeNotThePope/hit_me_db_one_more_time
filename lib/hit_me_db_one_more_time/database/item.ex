@@ -1,4 +1,4 @@
-defmodule HitMeDbOneMoreTimes.Database.Item do
+defmodule HitMeDbOneMoreTime.Database.Item do
   use Ecto.Schema
   import Ecto.Changeset
 

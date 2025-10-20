@@ -1,4 +1,4 @@
-defmodule HitMeDbOneMoreTimes do
+defmodule HitMeDbOneMoreTime do
   @moduledoc """
   An MCP (Model Context Protocol) Server with a plugin architecture for request processing.
 
@@ -41,7 +41,7 @@ defmodule HitMeDbOneMoreTimes do
 
   ## Examples
 
-      iex> HitMeDbOneMoreTimes.hello()
+      iex> HitMeDbOneMoreTime.hello()
       :world
 
   """

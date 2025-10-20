@@ -1,9 +1,9 @@
-defmodule HitMeDbOneMoreTimes.Database.Seeder do
+defmodule HitMeDbOneMoreTime.Database.Seeder do
   @moduledoc """
   Seeds the database with sample data for demonstration purposes.
   """
 
-  alias HitMeDbOneMoreTimes.Database.{Repo, Item}
+  alias HitMeDbOneMoreTime.Database.{Repo, Item}
 
   @doc """
   Creates the items table if it doesn't exist and seeds it with sample data.

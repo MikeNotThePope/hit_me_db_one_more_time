@@ -1,4 +1,4 @@
-defmodule HitMeDbOneMoreTimes.MCP.Server do
+defmodule HitMeDbOneMoreTime.MCP.Server do
   @moduledoc """
   MCP Server that communicates over stdio using JSON-RPC 2.0.
 
@@ -11,10 +11,10 @@ defmodule HitMeDbOneMoreTimes.MCP.Server do
   use GenServer
   require Logger
 
-  alias HitMeDbOneMoreTimes.MCP.{Protocol, Tools}
+  alias HitMeDbOneMoreTime.MCP.{Protocol, Tools}
 
   @server_info %{
-    "name" => "hit_me_db_one_more_times",
+    "name" => "hit_me_db_one_more_time",
     "version" => "0.1.0"
   }
 

@@ -1,7 +1,7 @@
-defmodule HitMeDbOneMoreTimes.Plugins.RateLimiterPluginTest do
+defmodule HitMeDbOneMoreTime.Plugins.RateLimiterPluginTest do
   use ExUnit.Case, async: false
 
-  alias HitMeDbOneMoreTimes.Plugins.RateLimiterPlugin
+  alias HitMeDbOneMoreTime.Plugins.RateLimiterPlugin
 
   setup do
     # Initialize the rate limiter table

@@ -1,7 +1,7 @@
-defmodule HitMeDbOneMoreTimes.MCP.ProtocolTest do
+defmodule HitMeDbOneMoreTime.MCP.ProtocolTest do
   use ExUnit.Case, async: true
 
-  alias HitMeDbOneMoreTimes.MCP.Protocol
+  alias HitMeDbOneMoreTime.MCP.Protocol
 
   describe "parse_request/1" do
     test "parses valid JSON request" do

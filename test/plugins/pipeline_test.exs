@@ -1,16 +1,16 @@
-defmodule HitMeDbOneMoreTimes.Plugins.PipelineTest do
+defmodule HitMeDbOneMoreTime.Plugins.PipelineTest do
   use ExUnit.Case, async: true
 
-  alias HitMeDbOneMoreTimes.Plugins.Pipeline
+  alias HitMeDbOneMoreTime.Plugins.Pipeline
 
   defmodule PassThroughPlugin do
-    @behaviour HitMeDbOneMoreTimes.Plugins.Behaviour
+    @behaviour HitMeDbOneMoreTime.Plugins.Behaviour
 
     def process(_request, _context), do: :pass
   end
 
   defmodule ShortCircuitPlugin do
-    @behaviour HitMeDbOneMoreTimes.Plugins.Behaviour
+    @behaviour HitMeDbOneMoreTime.Plugins.Behaviour
 
     def process(_request, _context) do
       {:respond, %{"cached" => true}}
@@ -18,7 +18,7 @@ defmodule HitMeDbOneMoreTimes.Plugins.PipelineTest do
   end
 
   defmodule ContextUpdatingPlugin do
-    @behaviour HitMeDbOneMoreTimes.Plugins.Behaviour
+    @behaviour HitMeDbOneMoreTime.Plugins.Behaviour
 
     def process(_request, context) do
       {:pass, Map.put(context, :updated, true)}

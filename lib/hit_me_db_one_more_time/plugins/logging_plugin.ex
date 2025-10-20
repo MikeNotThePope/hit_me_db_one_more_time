@@ -1,11 +1,11 @@
-defmodule HitMeDbOneMoreTimes.Plugins.LoggingPlugin do
+defmodule HitMeDbOneMoreTime.Plugins.LoggingPlugin do
   @moduledoc """
   A simple logging plugin that logs all requests passing through the pipeline.
 
   This demonstrates a basic plugin that always passes requests through.
   """
 
-  @behaviour HitMeDbOneMoreTimes.Plugins.Behaviour
+  @behaviour HitMeDbOneMoreTime.Plugins.Behaviour
 
   require Logger
 

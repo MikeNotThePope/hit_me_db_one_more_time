@@ -1,4 +1,4 @@
-defmodule HitMeDbOneMoreTimes.MCP.Protocol do
+defmodule HitMeDbOneMoreTime.MCP.Protocol do
   @moduledoc """
   Handles JSON-RPC 2.0 protocol for MCP (Model Context Protocol).
   """

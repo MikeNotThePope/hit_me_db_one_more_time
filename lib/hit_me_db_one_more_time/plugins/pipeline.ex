@@ -1,4 +1,4 @@
-defmodule HitMeDbOneMoreTimes.Plugins.Pipeline do
+defmodule HitMeDbOneMoreTime.Plugins.Pipeline do
   @moduledoc """
   Executes a chain of plugins in order.
 

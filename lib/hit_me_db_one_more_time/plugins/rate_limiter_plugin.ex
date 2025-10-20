@@ -1,4 +1,4 @@
-defmodule HitMeDbOneMoreTimes.Plugins.RateLimiterPlugin do
+defmodule HitMeDbOneMoreTime.Plugins.RateLimiterPlugin do
   @moduledoc """
   A rate limiting plugin that tracks and limits requests based on a fixed window algorithm.
 
@@ -31,7 +31,7 @@ defmodule HitMeDbOneMoreTimes.Plugins.RateLimiterPlugin do
   - Rate limit headers in responses (X-RateLimit-*)
   """
 
-  @behaviour HitMeDbOneMoreTimes.Plugins.Behaviour
+  @behaviour HitMeDbOneMoreTime.Plugins.Behaviour
 
   require Logger
 
