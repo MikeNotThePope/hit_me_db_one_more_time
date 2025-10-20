@@ -13,16 +13,25 @@ defmodule HitMeDbOneMoreTimes.MixProject do
 
   # Run "mix help compile.app" to learn about applications.
   def application do
-    [
-      extra_applications: [:logger]
-    ]
+    extra_applications = [:logger]
+
+    # Don't auto-start the app in test environment
+    if Mix.env() == :test do
+      [extra_applications: extra_applications]
+    else
+      [
+        extra_applications: extra_applications,
+        mod: {HitMeDbOneMoreTimes.Application, []}
+      ]
+    end
   end
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
+      {:jason, "~> 1.4"},
+      {:ecto_sql, "~> 3.11"},
+      {:ecto_sqlite3, "~> 0.17"}
     ]
   end
 end
