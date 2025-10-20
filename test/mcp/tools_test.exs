@@ -8,8 +8,9 @@ defmodule HitMeDbOneMoreTimes.MCP.ToolsTest do
     # Ensure the repo is started
     start_supervised!(HitMeDbOneMoreTimes.Database.Repo)
 
-    # Initialize cache
+    # Initialize plugin ETS tables
     HitMeDbOneMoreTimes.Plugins.CachePlugin.start_link()
+    HitMeDbOneMoreTimes.Plugins.RateLimiterPlugin.start_link()
 
     # Create table and seed test data
     Repo.query!("""

@@ -10,8 +10,9 @@ defmodule HitMeDbOneMoreTimes.Application do
   def start(_type, _args) do
     Logger.info("Starting Hit Me DB One More Times application...")
 
-    # Initialize the cache ETS table
+    # Initialize plugin ETS tables
     HitMeDbOneMoreTimes.Plugins.CachePlugin.start_link()
+    HitMeDbOneMoreTimes.Plugins.RateLimiterPlugin.start_link()
 
     children = [
       # Start the Ecto repository

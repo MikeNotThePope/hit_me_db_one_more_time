@@ -6,9 +6,10 @@ An MCP (Model Context Protocol) Server with a plugin architecture for demonstrat
 
 - **MCP Server**: Full JSON-RPC 2.0 implementation over stdio
 - **Plugin Architecture**: Middleware pipeline that intercepts requests before hitting the database
+- **Rate Limiting**: Fixed-window rate limiter (5 requests per 10 seconds)
+- **Caching Layer**: Response caching with 30-second TTL
 - **SQLite Database**: 100 sample records with pagination support
-- **Caching Plugin**: Demonstrates request interception for rate limiting
-- **Comprehensive Tests**: Full test coverage for all components
+- **Comprehensive Tests**: 28 tests covering all components
 
 ## Architecture
 
@@ -28,23 +29,31 @@ An MCP (Model Context Protocol) Server with a plugin architecture for demonstrat
 ┌─────────────────────────────────┐
 │    Plugin Pipeline              │
 │  ┌────────────────────────┐    │
-│  │ 1. Logging Plugin      │    │
-│  │    (logs requests)     │    │
-│  └───────────┬────────────┘    │
-│              ▼                  │
-│  ┌────────────────────────┐    │
-│  │ 2. Cache Plugin        │    │
-│  │    (short-circuits     │    │
-│  │     on cache hit)      │    │
-│  └───────────┬────────────┘    │
-│              │                  │
-└──────────────┼──────────────────┘
-               │ (cache miss)
-               ▼
-       ┌───────────────┐
-       │ SQLite DB     │
-       │ (100 items)   │
-       └───────────────┘
+│  │ 1. Rate Limiter        │    │
+│  │    (5 req/10s)         │    │
+│  │    ├─ if exceeded ──┐  │    │
+│  │    │                │  │    │
+│  │    ▼                │  │    │
+│  │ 2. Logging Plugin   │  │    │
+│  │    (logs requests)  │  │    │
+│  │    ▼                │  │    │
+│  │ 3. Cache Plugin     │  │    │
+│  │    (30s TTL)        │  │    │
+│  │    ├─ if hit ───┐   │  │    │
+│  │    │            │   │  │    │
+│  └────┼────────────┼───┼──┘    │
+│       │            │   │        │
+│       ▼            │   │        │
+│   Database         │   │        │
+│       │            │   │        │
+│       └────────────┴───┴────────┤
+│                                 │
+│     All short-circuits exit ────┤
+│     and return response here    │
+└─────────────────────────────────┘
+       │
+       ▼
+   Response to Client
 ```
 
 ## Installation
@@ -150,10 +159,50 @@ def process(request, context) do
 end
 ```
 
-For rate limiting, you would check request rates here and either:
-- Serve from cache if within rate limits
-- Deny the request if rate limit exceeded
-- Pass through if rate limit not reached
+### Example: Rate Limiter Plugin
+
+The rate limiter plugin demonstrates request counting and denial:
+
+```elixir
+def process(request, context) do
+  client_id = extract_client_id(request, context)
+
+  case check_rate_limit(client_id, max_requests, window_seconds) do
+    {:ok, current_count} ->
+      # Within limits - pass through
+      Logger.info("[Rate Limiter] Request allowed (#{current_count}/#{max_requests})")
+      {:pass, Map.put(context, :rate_limit_current, current_count)}
+
+    {:error, :rate_limit_exceeded, retry_after} ->
+      # Exceeded - short-circuit with error
+      Logger.warning("[Rate Limiter] Rate limit exceeded")
+      {:respond, %{
+        "error" => "rate_limit_exceeded",
+        "message" => "Too many requests. Please try again later.",
+        "details" => %{
+          "limit" => max_requests,
+          "retry_after_seconds" => retry_after
+        }
+      }}
+  end
+end
+```
+
+**Key Features:**
+- **Fixed window algorithm**: 5 requests per 10-second window
+- **ETS storage**: In-memory tracking per client/tool
+- **Automatic reset**: Counter resets after window expires
+- **Short-circuit on limit**: Returns error without touching database or cache
+
+**Configuration:**
+
+You can customize rate limits via context:
+```elixir
+context = %{
+  rate_limit_max: 10,       # 10 requests
+  rate_limit_window: 60     # per 60 seconds
+}
+```
 
 ### Adding Your Own Plugin
 
@@ -174,11 +223,14 @@ end
 
 ```elixir
 plugins = [
-  LoggingPlugin,
-  CachePlugin,
-  MyPlugin  # <-- Add your plugin
+  RateLimiterPlugin,  # Check rate limits first
+  LoggingPlugin,      # Log allowed requests
+  CachePlugin,        # Check cache for allowed requests
+  MyPlugin            # <-- Add your plugin
 ]
 ```
+
+**Plugin execution order matters!** Rate limiter runs first to reject over-limit requests before they're even logged.
 
 ## Project Structure
 
@@ -191,10 +243,11 @@ lib/
 │   │   ├── protocol.ex         # JSON-RPC 2.0 handling
 │   │   └── tools.ex            # Tool implementations
 │   ├── plugins/
-│   │   ├── behaviour.ex        # Plugin contract
-│   │   ├── pipeline.ex         # Plugin execution engine
-│   │   ├── logging_plugin.ex   # Logging example
-│   │   └── cache_plugin.ex     # Caching example (rate limit foundation)
+│   │   ├── behaviour.ex            # Plugin contract
+│   │   ├── pipeline.ex             # Plugin execution engine
+│   │   ├── rate_limiter_plugin.ex  # Rate limiting (fixed window)
+│   │   ├── logging_plugin.ex       # Request logging
+│   │   └── cache_plugin.ex         # Response caching (30s TTL)
 │   └── database/
 │       ├── repo.ex             # Ecto repository
 │       ├── item.ex             # Item schema
@@ -230,19 +283,56 @@ iex> HitMeDbOneMoreTimes.MCP.Tools.execute_tool("get_records", %{"limit" => 5})
 
 ## For Your Blog Post
 
-This server demonstrates key concepts for rate limiting:
+This server demonstrates a complete rate limiting implementation with these key concepts:
 
-1. **Request Interception**: The plugin pipeline intercepts all requests before they reach the database
-2. **Short-circuiting**: Plugins can serve responses without hitting the database
-3. **Shared Context**: Plugins can pass information to each other through the context
-4. **Caching Layer**: The cache plugin shows how to store and retrieve results
+### 1. **Plugin Pipeline Architecture**
+Requests flow through a middleware pipeline where each plugin can:
+- Inspect the request
+- Short-circuit and return early
+- Pass context to downstream plugins
+- Modify or reject requests
 
-To implement rate limiting, you would:
-1. Add a rate limiting plugin that tracks request counts per client
-2. Check if the rate limit is exceeded
-3. If exceeded, short-circuit with an error response
-4. If not exceeded, pass through and increment the counter
-5. Optionally serve from cache to reduce database load
+### 2. **Rate Limiting Implementation**
+The `RateLimiterPlugin` demonstrates:
+- **Fixed window algorithm**: Tracks requests in time windows (5 req/10s)
+- **ETS storage**: Fast in-memory counters per client
+- **Automatic expiration**: Windows reset after time period
+- **Graceful degradation**: Returns retry-after time in errors
+
+### 3. **Multi-Layer Defense**
+```
+Request → Rate Limiter → Logger → Cache → Database
+          └─ Denies      └─ Logs  └─ Serves  └─ Fetches
+             excessive      only      cached      fresh
+             requests      allowed    results     data
+```
+
+### 4. **Benefits of This Approach**
+
+**Performance**:
+- Rate-limited requests never hit the database
+- Cached responses skip database entirely
+- Logging only records allowed requests
+
+**Scalability**:
+- ETS provides microsecond lookups
+- No external dependencies needed for basic rate limiting
+- Easy to replace ETS with Redis for distributed systems
+
+**Observability**:
+- Structured logging at each layer
+- Rate limit metrics in response context
+- Clear error messages with retry guidance
+
+### 5. **Production Considerations**
+
+For production use, you'd enhance this with:
+- **Sliding window** algorithm for smoother rate limiting
+- **Redis** for distributed rate limiting across servers
+- **Per-user/API-key** tracking instead of per-tool
+- **Different limits** for different endpoints or user tiers
+- **Rate limit headers** (X-RateLimit-Limit, X-RateLimit-Remaining)
+- **Graceful degradation** strategies when rate limit storage fails
 
 ## License
 

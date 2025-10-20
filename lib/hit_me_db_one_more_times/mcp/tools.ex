@@ -6,7 +6,7 @@ defmodule HitMeDbOneMoreTimes.MCP.Tools do
   """
 
   alias HitMeDbOneMoreTimes.Database.{Repo, Item}
-  alias HitMeDbOneMoreTimes.Plugins.{Pipeline, LoggingPlugin, CachePlugin}
+  alias HitMeDbOneMoreTimes.Plugins.{Pipeline, RateLimiterPlugin, LoggingPlugin, CachePlugin}
   import Ecto.Query
 
   @doc """
@@ -46,9 +46,11 @@ defmodule HitMeDbOneMoreTimes.MCP.Tools do
     }
 
     # Define the plugin pipeline
+    # Order matters: rate limiter first, then logging, then cache
     plugins = [
-      LoggingPlugin,
-      CachePlugin
+      RateLimiterPlugin,  # Check rate limits first
+      LoggingPlugin,      # Log allowed requests
+      CachePlugin         # Check cache for allowed requests
     ]
 
     # Execute through the pipeline
