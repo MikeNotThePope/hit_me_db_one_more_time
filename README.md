@@ -2,6 +2,10 @@
 
 An MCP (Model Context Protocol) Server with a plugin architecture for demonstrating rate limiting concepts.
 
+## Learn More
+
+Read the full story of building this server: [7 Things I Learned Building a Rate-Limited MCP Server in Elixir](https://mikenotthepope.com/7-things-i-learned-building-a-rate-limited-mcp-server-in-elixir/)
+
 ## Features
 
 - **MCP Server**: Full JSON-RPC 2.0 implementation over stdio
